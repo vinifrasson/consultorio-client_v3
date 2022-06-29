@@ -3,10 +3,45 @@ import HomeView from '../views/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: HomeView
   },
+  {
+    path: '/convenio',
+    name: 'convenio',
+    component: () => import('../views/convenio/convenio-list.vue')
+  },
+  {
+    path: '/especialidade',
+    name: 'especialidade',
+    component: () => import('../views/especialidade/especialidade-list.vue')
+  },
+  {
+    path: '/medico',
+    name: 'medico',
+    component: () => import('../views/medico/medico-list.vue')
+  },
+
+  {
+    path: '/paciente',
+    name: 'paciente',
+    component: () => import('../views/paciente/paciente-list.vue')
+  },
+
+  {
+    path: '/secretaria',
+    name: 'secretaria',
+    component: () => import('../views/secretaria/secretaria-list.vue')
+  },
+
+  {
+    path: '/cadastrar-secretaria',
+    name: 'cadastrar-secretaria',
+    component: () => import('../views/secretaria/cadastrar-list.vue')
+  },
+  
+
   {
     path: '/about',
     name: 'about',
