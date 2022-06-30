@@ -40,7 +40,13 @@ const routes: Array<RouteRecordRaw> = [
     name: 'cadastrar-secretaria',
     component: () => import('../views/secretaria/cadastrar-list.vue')
   },
-  
+
+  {
+    path: '/detalhar-secretaria',
+    name: 'detalhar-secretaria',
+    component: () => import('../views/secretaria/detalhar-list.vue')
+  },
+
 
   {
     path: '/about',

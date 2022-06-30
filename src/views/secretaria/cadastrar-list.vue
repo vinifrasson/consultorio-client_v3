@@ -8,8 +8,6 @@
     </article>
     </div>
 
-
-
     <div class="columns is-12">
       <div class="field column is-3">
         <label class="label">Nome</label>
