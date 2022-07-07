@@ -13,9 +13,9 @@
           <p class="menu-label"> Agenda </p>
           <ul class="menu-list">
             <li><router-link to="/agendamento">Agendamento</router-link></li>
-            <li><router-link to="/historico">Históricos</router-link></li>
+            <li><router-link to="/historico">Histórico</router-link></li>
           </ul>
-
+      
           <p class="menu-label"> Pessoas </p>
           <ul class="menu-list">
             <li><router-link to="/paciente">Paciente</router-link></li>
@@ -25,16 +25,16 @@
 
           <p class="menu-label"> Administração </p>
           <ul class="menu-list">
-            <li><router-link to="/especialidade">Especialidade</router-link></li>
+            <li><router-link to="/especialidade/listar">Especialidade</router-link></li>
             <li><router-link to="/convenio">Convênio</router-link></li>
           </ul>
-      
         </aside>
       </nav>
     </div>
     <div class="column is-9 conteudo">
       <router-view> </router-view>
     </div>
+
   </div>
 </template>
 
@@ -52,7 +52,7 @@ nav {
     font-weight: bold;
     color: #2c3e50;
     &.router-link-exact-active {
-      color: #42b983;
+      color: #f10d0d;
     }
   }
 }
