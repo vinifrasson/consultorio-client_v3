@@ -1,110 +1,105 @@
 <template>
-  <div class="convenio">
+  <div>
     <div class="columns is-12">
-      <div class="title">
-        <h1>Lista de Convênios</h1>
-      </div>
+      <article class="titulo panel is-primary">
+        <p class="panel-heading">
+          Lista de Convênio
+        </p>
+      </article>
     </div>
 
-<div class="search-bar">
-            <input type="search" name="search-bar" placeholder="Nome do convênio">
-            <button>Cadastrar</button>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Valor</th>
-                    <th>Opções</th>
-                </tr>
-            </thead>
-    <tbody>
-      <tr>
-        <th>1</th>
-        <td><p>Unimed</p></td>
-        <td><p>R$ 150,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
 
-      <tr>
-        <th>2</th>
-        <td><p>Hapvida</p></td>
-        <td><p>R$ 250,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-  
+ <div class="search-bar">
+      <input type="search" name="search-bar" placeholder="Nome da especialidade">
+      <button>Buscar</button>
+      <router-link to="/cadastroconvenio"><button>Cadastrar</button></router-link>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="text-align: center;">ID</th>
+          <th style="text-align: center;">Status</th>
+          <th style="text-align: center;">Nome</th>
+          <th style="text-align: center;">Valor</th>
+          <th style="text-align: center;">Opções</th>
+        </tr>
+      </thead>
+        <tbody>
+          <tr v-for="convenio in conveniosList" :key="convenio.id">
+            <th style="text-align: center;">{{convenio.id}}</th>
 
-      <tr>
-        <th>3</th>
-        <td><p>Bradesco SE</p></td>
-        <td><p>R$ 315,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-      
-      <tr>
-        <th>4</th>
-        <td><p>Greenline</p></td>
-        <td><p>R$ 365,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
+            <th style="text-align: center;">
+              <span v-if="convenio.ativo" class="tag is-success"> Ativo </span>
+              <span v-if="!convenio.ativo" class="tag is-danger"> Inativo</span>  
+            </th>
 
-      <tr>
-        <th>5</th>
-        <td><p>Assim Saúde</p></td>
-        <td><p>R$ 400,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
+            <th style="text-align: center;">{{ convenio.nome }}</th>
+            <th style="text-align: center; ">{{ convenio.valor }}</th>
+          <th><button @click="onClickPaginaDetalhar(convenio.id)" class="button is-primary">
+              <p>Detalhes</p>
+            </button></th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
 </template>
 
+<script lang="ts">
+import { Vue } from 'vue-class-component';
+
+import { PageRequest } from '@/model/page/page-request';
+import { PageResponse } from '@/model/page/page-response';
+
+import { Convenio } from '@/model/convenio.model';
+import { ConvenioClient } from '@/client/convenio.client';
+
+export default class ConvenioView extends Vue {
+  public pageRequest: PageRequest = new PageRequest()
+  public pageResponse: PageResponse<Convenio> = new PageResponse()
+
+  public textSearch = ""
+  public conveniosList: Convenio[] = []
+  public convenioClient!: ConvenioClient
+
+  public mounted(): void {
+    this.convenioClient = new ConvenioClient()
+    this.listarConvenios()
+  }
+
+  public listarConvenios(): void {
+    this.convenioClient.findByFiltrosPaginado(this.pageRequest)
+      .then(
+        success => {
+          this.pageResponse = success
+          this.conveniosList = this.pageResponse.content
+        },
+        error => console.log(error)
+      )
+  }
+
+  public onClickPesquisar(): void {
+    this.convenioClient.findByName(this.pageRequest, this.textSearch)
+      .then(
+        success => {
+          this.pageResponse = success
+          this.conveniosList = this.pageResponse.content
+        },
+        error => console.log(error)
+      )
+  }
+
+  public onClickPaginaCadastrar(): void {
+    this.$router.push({ name: 'ConveniosForm', params: { model: 'cadastrar' } })
+  }
+
+  public onClickPaginaDetalhar(id: number): void {
+    this.$router.push({ name: 'ConveniosForm', params: { id: id, model: 'detalhar' } })
+  }
+
+}
+</script>
+
 <style>
-
-.title h1{
-    font-size:0.7em;
-    margin-left: 13px;
-}
-
-.table thead{
-  background-color: rgb(84, 233, 84);
-  width: 100%;
-}
-
-.table{
-  width: 80%;
-  border: 1px solid #ddd;
-  margin-top: 20px;
-}
-
-.table tr:nth-child(even){background-color: #f2f2f2;}
-
-td p{
-    font-weight: bold;
-}
-
-.table td{
-    border-left: 1px dashed #ddd;
-}
-
-tbody tr:hover{
-    background-color: #f8f8f8;;
-}
-
-.search-bar input{
-    height: 35px;
-    width: 60em;
-    border-radius: 0.3em;
-    border: 1px solid #ddd;
-}
-
-.search-bar button, .detail-button{
-  height: 35px;
-  margin-left: 10px;
-}
-
-
-
 
 </style>

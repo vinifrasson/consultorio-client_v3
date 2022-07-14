@@ -16,10 +16,10 @@
     <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Status</th>
-          <th>Nome</th>
-          <th>Opções</th>
+          <th style="text-align: center;">ID</th>
+          <th style="text-align: center;">Status</th>
+          <th style="text-align: center;">Nome</th>
+          <th style="text-align: center;">Opções</th>
         </tr>
       </thead>
       <tbody>
@@ -32,7 +32,7 @@
           </th>
 
           <th style="text-align: center;">{{ item.nome }}</th>
-          <td><button @click="onClickPaginaDetalhar(item.id)" class="button is-link is-focused">
+          <td><button @click="onClickPaginaDetalhar(item.id)" class="button is-primary">
               <p>Detalhes</p>
             </button></td>
         </tr>

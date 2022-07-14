@@ -1,46 +1,94 @@
 <template>
-  <div class="secretaria">
+  <div>
     <div class="columns is-12">
-      <div class="title">
-        <h1>Lista de Secretárias</h1>
-      </div>
+      <article class="titulo panel is-primary">
+        <p class="panel-heading">
+          Lista de Secretária
+        </p>
+      </article>
     </div>
 
-    <div class="search-bar">
-      <input type="search" name="search-bar" placeholder="Nome da Secretária">
-      <button>Buscar</button>
-      <router-link to="/cadastrar-secretaria"><button class="detail-button">Cadastrar</button></router-link>
+    <div class="columns">
+      <div class="column is-6">
+        <input class="input" type="text" placeholder="Pesquisar">
+      </div>
+      <div class="column is-2">
+        <router-link to="/cadastrosecretaria"><button>Pesquisar</button></router-link>
+      </div>
+      <div class="column is-3">
+        <router-link to="/cadastrosecretaria"><button>Cadastrar</button></router-link>
+      </div>
     </div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>PIS</th>
-          <th>Salário</th>
-          <th>Opções</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>1</th>
-          <td>
-            <p>Vinícius Frasson</p>
-          </td>
-          <td>
-            <p>100.200.300-40</p>
-          </td>
-          <td>
-            <p>R$ 25.000,00</p>
-          </td>
-          <td>
-            <router-link to="/detalhar-secretaria"><button class="detail-button">Detalhar</button></router-link>  
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="column is-11">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Nome</th>
+            <th>RG</th>
+            <th>Email</th>
+            <th>Celular</th>
+            <th>Telefone</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="secretaria in secretariaList" :key="secretaria.id">
+            <td>{{ secretaria.id }}</td>
+            <th>
+              <span v-if="secretaria.ativo" class="tag is-success"> Ativo </span>
+              <span v-if="!secretaria.ativo" class="tag is-danger"> Inativo </span>
+            </th>
+            <td> {{ secretaria.nome }}</td>
+            <td> {{ secretaria.rg }}</td>
+            <td> {{ secretaria.email }}</td>
+            <td> {{ secretaria.celular }}</td>
+            <td> {{ secretaria.telefone }}</td>
+            <th>
+              <button @click="onClickPaginaDetalhar(secretaria.id)" class="button is-warning"> Detalhar</button>
+            </th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
+
+<script lang="ts">
+import { Vue } from 'vue-class-component';
+
+import { PageRequest } from '@/model/page/page-request'
+import { PageResponse } from '@/model/page/page-response'
+
+import { Secretaria } from '@/model/secretaria.model'
+import { SecretariaClient } from '@/client/secretaria.client'
+
+export default class secretariaList extends Vue {
+  public pageRequest: PageRequest = new PageRequest()
+  public pageResponse: PageResponse<Secretaria> = new PageResponse()
+  public secretariaList: Secretaria[] = []
+  public secretariaClient!: SecretariaClient
+  public mounted(): void {
+    this.secretariaClient = new SecretariaClient()
+    this.listarsecretaria()
+  }
+  public listarsecretaria(): void {
+    this.secretariaClient.findByFiltrosPaginado(this.pageRequest)
+      .then(
+        success => {
+          this.pageResponse = success
+          this.secretariaList = this.pageResponse.content
+        },
+        error => console.log(error)
+      )
+  }
+  public onClickPaginaDetalhar(idSecretaria: number) {
+    this.$router.push({ name: 'secretaria-detalhar', params: { id: idSecretaria, model: 'detalhar' } })
+  }
+
+}
+</script>
 
 
 <style>

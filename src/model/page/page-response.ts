@@ -1,5 +1,5 @@
 export class PageResponse<T> {
-    content!: T[]
+    content!: []
     totalPages!: number
     totalElements!: number
     last!: boolean

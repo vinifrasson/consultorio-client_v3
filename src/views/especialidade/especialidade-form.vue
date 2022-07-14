@@ -51,65 +51,86 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { Especialidade } from '@/model/especialidade.model'
-import { Notification } from '@/model/notification'
-import { EspecialidadeClient } from '@/client/especialidade.client'
+    import { Vue } from 'vue-class-component';
+    import { Especialidade } from '@/model/especialidade.model'
+    import { Notification } from '@/model/notification'
+    import { EspecialidadeClient } from '@/client/especialidade.client'
+    import { Prop } from 'vue-property-decorator'
 
-export default class EspecialidadeForm extends Vue {
+    export default class EspecialidadeForm extends Vue {
+        public especialidadeClient!: EspecialidadeClient
+        public especialidade : Especialidade = new Especialidade()
+        public notification : Notification = new Notification()
+    
+         @Prop({ type: Number, required: false })
+        private readonly id!: number
 
-    private especialidadeClient!: EspecialidadeClient
-    especialidade: Especialidade = new Especialidade()
-    notification: Notification = new Notification()
+        @Prop({ type: String, default: false })
+        readonly model!: string
 
-    @Prop({ type: Number, required: false })
-    private readonly id!: number
+        public mounted(): void {
+            this.especialidadeClient = new EspecialidadeClient()
+            this.carregarEspecialidade()
 
-    @Prop({ type: String, default: false })
-    public readonly model!: string
-
-    public mounted(): void {
-        this.especialidadeClient = new EspecialidadeClient()
-        console.log(this.id)
-        console.log(this.model)
-        this.carregarEspecialidade()
-    }
-
-    public onClickCadastrar(): void {
-
-        this.especialidadeClient.cadastrar(this.especialidade)
-            .then(
+            console.log(this.id)
+            console.log(this.model)
+        }
+        
+        public onClickCadastrar(): void {
+            
+            this.especialidadeClient.cadastrar(this.especialidade)
+                .then(
                 success => {
-                    console.log(success)
-                    this.notification = this.notification.new(true, 'notification is-success', 'Especialidade Cadastrada com sucesso!!!')
-                    //this.onClickLimpar()
+                    this.notification = this.notification.new(true, 'notification is-success', 'especialidade cadastrado com sucesso!')
+                    this.onClickLimpar()
                 }, error => {
                     this.notification = this.notification.new(true, 'notification is-danger', 'Error: ' + error)
-                    //this.onClickLimpar()
+                    
                 })
+        }
+
+        public onClickDeletar(): void {
+            this.especialidadeClient.desativar(this.especialidade).then(sucess => {
+            this.notification = this.notification.new(true, 'notification is-success', 'especialidade foi Desativado com sucesso!')
+            }, error => {
+            this.notification = this.notification.new(true, 'notification is-danger', 'Error: ' + error)
+            })
+        }
+
+        public onClickPaginaEditar(idEspecialidade: number){
+            this.$router.push({ name: 'especialidade-editar', params: { id: idEspecialidade, model: 'editar' } })
+            console.log("ta chamando")
+        }
+
+        public onClickSalvarAlteracao(): void {
+            this.especialidadeClient.editar(this.especialidade).then(success => {
+            this.notification = this.notification.new(true, 'notification is-success', 'especialidade foi Editado com sucesso!')
+            }, error => {
+            this.notification = this.notification.new(true, 'notification is-danger', 'Error: ' + error)
+            })
+        }
+
+
+        public carregarEspecialidade(): void{
+
+                this.especialidadeClient.findById(this.id).then(value => {
+                this.especialidade = value
+                console.log("especialidade" + value)
+                }).catch(error => {
+                    console.log(error)
+                })
+            
+        }
+
+        public onClickFecharNotificacao(): void {
+            this.notification = new Notification()
+        }
+
+        public onClickLimpar(): void {
+            this.especialidade = new Especialidade()
+        }
+
     }
-
-    public onClickFecharNotificacao(): void {
-        this.notification = new Notification()
-    }
-
-    public onClickLimpar(): void {
-        this.especialidade = new Especialidade()
-    }
-
-    public carregarEspecialidade(): void {
-
-        console.log("carregarEspecialidade" + this.id)
-        this.especialidadeClient.findById(this.id).then(value => {
-            this.especialidade = value
-            console.log(value)
-        }).catch(error => {
-            console.log(error)
-        })
-
-    }
-}
 </script>
 
 <style>

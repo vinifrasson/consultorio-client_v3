@@ -20,7 +20,7 @@
           <ul class="menu-list">
             <li><router-link to="/paciente">Paciente</router-link></li>
             <li><router-link to="/medico">Médico</router-link></li>
-            <li><router-link to="/secretaria">Secretaria</router-link></li>
+            <li><router-link to="/secretaria-list">Secretaria</router-link></li>
           </ul>
 
           <p class="menu-label"> Administração </p>

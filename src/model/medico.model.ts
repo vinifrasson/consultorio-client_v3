@@ -1,10 +1,16 @@
-import { AbstractEntity } from "./abstract-entity.model";
 import { Especialidade } from "./especialidade.model";
+import { Pessoa } from "./pessoa.model";
 
-export class Medico extends AbstractEntity{
+export class Medico extends Pessoa{
     crm! : string
     consultorio! : string
-    porcentagemparticipacao! : number
-    valorconsulta! : number
+    porcentagemParticipacao! : number
+    valorConsulta! : number
     especialidade! : Especialidade
+
+    constructor() {
+        super();
+        this.ativo = true
+        this.especialidade = new Especialidade();
+    }
 }

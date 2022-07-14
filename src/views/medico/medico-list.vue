@@ -1,125 +1,130 @@
 <template>
-  <div class="medico">
+  <div>
     <div class="columns is-12">
-      <div class="title">
-        <h1>Lista de Médicos</h1>
-      </div>
+      <article class="titulo panel is-primary">
+        <p class="panel-heading">
+          Lista de Médicos
+        </p>
+      </article>
+    </div>
+    <div class="search-bar">
+      <input type="search" name="search-bar" placeholder="Nome da medico">
+      <button>Buscar</button>
+      <router-link to="/cadastromedico"><button>Cadastrar</button></router-link>
     </div>
 
-<div class="search-bar">
-            <input type="search" name="search-bar" placeholder="Nome do Médico">
-            <button>Cadastrar</button>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Especialidade</th>
-                    <th>CRM</th>
-                    <th>% de participação</th>
-                    <th>Valor consulta</th>
-                    <th>Opções</th>
-                </tr>
-            </thead>
-    <tbody>
-      <tr>
-        <th>1</th>
-        <td><p>Vinícius Frasson</p></td>
-        <td><p>Cardiologia</p></td>
-        <td><p>CRM/PR 123456</p></td>
-        <td><p>20.00</p></td>
-        <td><p>R$ 70,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="text-align: center;">ID</th>
+          <th style="text-align: center;">Nome</th>
+          <th style="text-align: center;">CRM</th>
+          <th style="text-align: center;">Especialidade</th>
+          <th style="text-align: center;">Celular</th>
+          <th style="text-align: center;">Opções</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="medico in medicoList" :key="medico.id">
+          <td>{{ medico.id }}</td>
+          <th>
+            <span v-if="medico.ativo" class="tag is-success"> Ativo </span>
+            <span v-if="!medico.ativo" class="tag is-danger"> Inativo </span>
+          </th>
+          <td> {{ medico.nome }}</td>
+          <td> {{ medico.crm }}</td>
+          <td> {{ medico.especialidade }}</td>
+          <td> {{ medico.celular }}</td>
+          <th>
+            <button @click="onClickPaginaDetalhar(medico.id)" class="button is-warning"> Detalhar</button>
+          </th>
+        </tr>
+      </tbody>
+    </table>
 
-      <tr>
-        <th>2</th>
-        <td><p>Sergio Dallazem</p></td>
-        <td><p>Psiquiatria</p></td>
-        <td><p>CRM/PR 123456</p></td>
-        <td><p>7.00</p></td>
-        <td><p>R$ 55,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-  
-
-      <tr>
-        <th>3</th>
-        <td><p>Anna Claudia Dallazem</p></td>
-        <td><p>Radioterapia</p></td>
-        <td><p>CRM/PR 123456</p></td>
-        <td><p>10.00</p></td>
-        <td><p>R$ 47,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-      
-      <tr>
-        <th>4</th>
-        <td><p>Eugenio Guizzo Neto</p></td>
-        <td><p>Geriatria</p></td>
-        <td><p>CRM/PR 123456</p></td>
-        <td><p>13.00</p></td>
-        <td><p>R$ 69,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-
-      <tr>
-        <th>5</th>
-        <td><p>Ana Possamai Guizzo</p></td>
-        <td><p>Oftalmologia</p></td>
-        <td><p>CRM/PR 123456</p></td>
-        <td><p>18.00</p></td>
-        <td><p>R$ 100,00</p></td>
-        <td><button class="detail-button">Detalhar</button></td>
-      </tr>
-    </tbody>
-  </table>
   </div>
+
 </template>
 
-<style>
+<script lang="ts">
+import { Vue } from 'vue-class-component';
 
-.title h1{
-    font-size:0.7em;
-    margin-left: 13px;
+import { PageRequest } from '@/model/page/page-request'
+import { PageResponse } from '@/model/page/page-response'
+
+import { Medico } from '@/model/medico.model'
+import { MedicoClient } from '@/client/medico.client'
+
+export default class MedicoList extends Vue {
+  public pageRequest: PageRequest = new PageRequest()
+  public pageResponse: PageResponse<Medico> = new PageResponse()
+  public medicoList: Medico[] = []
+  public medicoClient!: MedicoClient
+  public mounted(): void {
+    this.medicoClient = new MedicoClient()
+    this.listarmedico()
+  }
+  public listarmedico(): void {
+    this.medicoClient.findByFiltrosPaginado(this.pageRequest)
+      .then(
+        success => {
+          this.pageResponse = success
+          this.medicoList = this.pageResponse.content
+        },
+        error => console.log(error)
+      )
+  }
+  public onClickPaginaDetalhar(idMedico: number) {
+    this.$router.push({ name: 'medico-detalhar', params: { id: idMedico, model: 'detalhar' } })
+  }
+
+}
+</script>
+
+<style>
+.title h1 {
+  font-size: 0.7em;
+  margin-left: 13px;
 }
 
-.table thead{
+.table thead {
   background-color: rgb(84, 233, 84);
   width: 100%;
 }
 
-.table{
+.table {
   width: 80%;
   border: 1px solid #ddd;
   margin-top: 20px;
 }
 
-.table tr:nth-child(even){background-color: #f2f2f2;}
-
-td p{
-    font-weight: bold;
+.table tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 
-.table td{
-    border-left: 1px dashed #ddd;
+td p {
+  font-weight: bold;
 }
 
-tbody tr:hover{
-    background-color: #f8f8f8;;
+.table td {
+  border-left: 1px dashed #ddd;
 }
 
-.search-bar input{
-    height: 35px;
-    width: 60em;
-    border-radius: 0.3em;
-    border: 1px solid #ddd;
+tbody tr:hover {
+  background-color: #f8f8f8;
+  ;
 }
 
-.search-bar button, .detail-button{
+.search-bar input {
+  height: 35px;
+  width: 60em;
+  border-radius: 0.3em;
+  border: 1px solid #ddd;
+}
+
+.search-bar button,
+.detail-button {
   height: 35px;
   margin-left: 10px;
 }
-
 </style>

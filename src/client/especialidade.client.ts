@@ -4,12 +4,7 @@ import { Especialidade } from "@/model/especialidade.model";
 import { PageRequest } from "@/model/page/page-request";
 import { PageResponse } from "@/model/page/page-response";
 
-/**
- * @author Eduardo Sganderla
- *
- * @since 1.0.0, 14/06/2022
- * @version 1.0.0
- */
+
 export class EspecialidadeClient {
 
     private axiosClient: AxiosInstance;
